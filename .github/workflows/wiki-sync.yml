@@ -23,13 +23,27 @@ jobs:
                   git config --global user.name "github-actions[bot]"
                   git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-            - name: Clone wiki repository
+            - name: Prepare wiki repository
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
-                  REPO="${GITHUB_REPOSITORY}"
-                  WIKI_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.wiki.git"
+                set -e
+                REPO="${GITHUB_REPOSITORY}"
+                WIKI_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.wiki.git"
+
+                echo "Checking if wiki repository exists: ${WIKI_URL}"
+                if git ls-remote "$WIKI_URL" > /dev/null 2>&1; then
+                  echo "Wiki repository exists, cloning..."
                   git clone "$WIKI_URL" wiki
+                else
+                  echo "Wiki repository not found."
+                  echo "Make sure the Wiki feature is enabled for this repo,"
+                  echo "and create an initial page via the GitHub UI to initialize the wiki."
+                  echo "Skipping wiki sync."
+                  # Create empty wiki directory so later steps don't fail, but exit successfully
+                  mkdir -p wiki
+                  exit 0
+                fi
 
             - name: Sync docs into wiki
               run: |
