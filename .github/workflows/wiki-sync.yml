@@ -38,6 +38,12 @@ jobs:
             echo "Wiki repository exists, cloning..."
             rm -rf "$TARGET_DIR"
             git clone "$WIKI_URL" "$TARGET_DIR"
+
+            echo "Verifying wiki clone remotes"
+            cd "$TARGET_DIR"
+            git remote set-url origin "$WIKI_URL"
+            git remote -v
+            cd -
             echo "wiki_available=true" >> "$GITHUB_OUTPUT"
           else
             echo "Wiki repository not found."
@@ -81,6 +87,14 @@ jobs:
           echo "Current directory: $(pwd)"
           echo "Git remotes:"
           git remote -v
+
+          ORIGIN_URL="$(git remote get-url origin || echo '')"
+          echo "Origin URL: $ORIGIN_URL"
+          if ! echo "$ORIGIN_URL" | grep -q ".wiki.git"; then
+            echo "Remote 'origin' does not look like a wiki repo (.wiki.git)."
+            echo "Refusing to push to avoid updating the main repository."
+            exit 1
+          fi
 
           if git status --porcelain | grep .; then
             git add .
