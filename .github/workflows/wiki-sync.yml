@@ -1,0 +1,48 @@
+name: Sync docs to Wiki
+
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - "docs/**"
+
+jobs:
+    sync-wiki:
+        name: Generate Wiki from docs
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Configure Git identity
+              run: |
+                  git config --global user.name "github-actions[bot]"
+                  git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+            - name: Clone wiki repository
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  REPO="${GITHUB_REPOSITORY}"
+                  WIKI_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.wiki.git"
+                  git clone "$WIKI_URL" wiki
+
+            - name: Sync docs into wiki
+              run: |
+                  mkdir -p wiki
+                  rsync -av --delete docs/ wiki/
+
+            - name: Commit and push wiki changes
+              working-directory: wiki
+              run: |
+                  if git status --porcelain | grep .; then
+                    git add .
+                    git commit -m "Sync docs to wiki from docs folder"
+                    git push
+                  else
+                    echo "No wiki changes to commit"
+                  fi
