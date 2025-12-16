@@ -1,62 +1,85 @@
 name: Sync docs to Wiki
 
 on:
-    push:
-        branches:
-            - main
-        paths:
-            - "docs/**"
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/**"
 
 jobs:
-    sync-wiki:
-        name: Generate Wiki from docs
-        runs-on: ubuntu-latest
-        permissions:
-            contents: write
+  sync-wiki:
+    name: Generate Wiki from docs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-            - name: Configure Git identity
-              run: |
-                  git config --global user.name "github-actions[bot]"
-                  git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Configure Git identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-            - name: Prepare wiki repository
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: |
-                set -e
-                REPO="${GITHUB_REPOSITORY}"
-                WIKI_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.wiki.git"
+      - name: Prepare wiki repository
+        id: prepare-wiki
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          REPO="${GITHUB_REPOSITORY}"
+          WIKI_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.wiki.git"
 
-                echo "Checking if wiki repository exists: ${WIKI_URL}"
-                if git ls-remote "$WIKI_URL" > /dev/null 2>&1; then
-                  echo "Wiki repository exists, cloning..."
-                  git clone "$WIKI_URL" wiki
-                else
-                  echo "Wiki repository not found."
-                  echo "Make sure the Wiki feature is enabled for this repo,"
-                  echo "and create an initial page via the GitHub UI to initialize the wiki."
-                  echo "Skipping wiki sync."
-                  # Create empty wiki directory so later steps don't fail, but exit successfully
-                  mkdir -p wiki
-                  exit 0
-                fi
+          echo "Checking if wiki repository exists: ${WIKI_URL}"
+          if git ls-remote "$WIKI_URL" > /dev/null 2>&1; then
+            echo "Wiki repository exists, cloning..."
+            git clone "$WIKI_URL" wiki
+            echo "wiki_available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Wiki repository not found."
+            echo "Make sure the Wiki feature is enabled for this repo,"
+            echo "and create an initial page via the GitHub UI to initialize the wiki."
+            echo "Skipping wiki sync."
+            echo "wiki_available=false" >> "$GITHUB_OUTPUT"
+          fi
 
-            - name: Sync docs into wiki
-              run: |
-                  mkdir -p wiki
-                  rsync -av --delete docs/ wiki/
+      - name: Sync docs into wiki
+        if: steps.prepare-wiki.outputs.wiki_available == 'true'
+        run: |
+          rsync -av --delete docs/ wiki/
 
-            - name: Commit and push wiki changes
-              working-directory: wiki
-              run: |
-                  if git status --porcelain | grep .; then
-                    git add .
-                    git commit -m "Sync docs to wiki from docs folder"
-                    git push
-                  else
-                    echo "No wiki changes to commit"
-                  fi
+      - name: Generate wiki Home page
+        if: steps.prepare-wiki.outputs.wiki_available == 'true'
+        working-directory: wiki
+        run: |
+          echo "# Project Documentation" > Home.md
+          echo >> Home.md
+          echo "This wiki is generated automatically from the docs/ folder." >> Home.md
+          echo >> Home.md
+          echo "## Pages" >> Home.md
+          echo >> Home.md
+
+          # List all markdown files under docs/ and add them as links
+          find ../docs -type f -name '*.md' | sort | while read -r file; do
+            rel="${file#../docs/}"
+            title_base="${rel%.md}"
+            # Create a nicer title by stripping leading numbers and replacing dashes with spaces
+            nice_title="$(echo "$title_base" | sed -E 's/^[0-9]+[-_ ]*//; s/[-_]/ /g')"
+            [ -z "$nice_title" ] && nice_title="$title_base"
+            link_path="${title_base}"
+            echo "- [$nice_title]($link_path)" >> Home.md
+          done
+
+      - name: Commit and push wiki changes
+        if: steps.prepare-wiki.outputs.wiki_available == 'true'
+        working-directory: wiki
+        run: |
+          if git status --porcelain | grep .; then
+            git add .
+            git commit -m "Sync docs to wiki from docs folder"
+            git push
+          else
+            echo "No wiki changes to commit"
+          fi
