@@ -204,4 +204,4 @@ Notes:
 - The `eventDetails` object is intentionally minimal and action-specific
 - New fields may be added over time
 - All events are published as a single message per record.
-- For the latest schema and TypeScript types, see `@messaging/schema`
+- For the latest schema and TypeScript types, see `@messaging/schema`.

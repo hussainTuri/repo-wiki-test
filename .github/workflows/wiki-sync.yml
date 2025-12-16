@@ -31,11 +31,13 @@ jobs:
           set -e
           REPO="${GITHUB_REPOSITORY}"
           WIKI_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.wiki.git"
+          TARGET_DIR="wiki-repo"
 
           echo "Checking if wiki repository exists: ${WIKI_URL}"
           if git ls-remote "$WIKI_URL" > /dev/null 2>&1; then
             echo "Wiki repository exists, cloning..."
-            git clone "$WIKI_URL" wiki
+            rm -rf "$TARGET_DIR"
+            git clone "$WIKI_URL" "$TARGET_DIR"
             echo "wiki_available=true" >> "$GITHUB_OUTPUT"
           else
             echo "Wiki repository not found."
@@ -48,11 +50,11 @@ jobs:
       - name: Sync docs into wiki
         if: steps.prepare-wiki.outputs.wiki_available == 'true'
         run: |
-          rsync -av --delete docs/ wiki/
+          rsync -av --delete docs/ wiki-repo/
 
       - name: Generate wiki Home page
         if: steps.prepare-wiki.outputs.wiki_available == 'true'
-        working-directory: wiki
+        working-directory: wiki-repo
         run: |
           echo "# Project Documentation" > Home.md
           echo >> Home.md
@@ -74,7 +76,7 @@ jobs:
 
       - name: Commit and push wiki changes
         if: steps.prepare-wiki.outputs.wiki_available == 'true'
-        working-directory: wiki
+        working-directory: wiki-repo
         run: |
           if git status --porcelain | grep .; then
             git add .
