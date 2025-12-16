@@ -78,9 +78,13 @@ jobs:
         if: steps.prepare-wiki.outputs.wiki_available == 'true'
         working-directory: wiki-repo
         run: |
+          echo "Current directory: $(pwd)"
+          echo "Git remotes:"
+          git remote -v
+
           if git status --porcelain | grep .; then
             git add .
-            git commit -m "Sync docs to wiki from docs folder"
+            git commit -m "[wiki] Sync docs from docs/ folder"
             git push
           else
             echo "No wiki changes to commit"
