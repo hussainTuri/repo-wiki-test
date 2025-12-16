@@ -24,4 +24,4 @@ List other options you evaluated and why they were rejected.
 Link to previous or future ADRs that relate to this decision.
 
 ## Date
-The date the decision was made.
+The date the decision was made
