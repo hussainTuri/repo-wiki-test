@@ -23,43 +23,18 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Prepare wiki repository
-        id: prepare-wiki
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -e
-          REPO="${GITHUB_REPOSITORY}"
-          WIKI_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.wiki.git"
-          TARGET_DIR="wiki-repo"
-
-          echo "Checking if wiki repository exists: ${WIKI_URL}"
-          if git ls-remote "$WIKI_URL" > /dev/null 2>&1; then
-            echo "Wiki repository exists, cloning..."
-            rm -rf "$TARGET_DIR"
-            git clone "$WIKI_URL" "$TARGET_DIR"
-
-            echo "Verifying wiki clone remotes"
-            cd "$TARGET_DIR"
-            git remote set-url origin "$WIKI_URL"
-            git remote -v
-            cd -
-            echo "wiki_available=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "Wiki repository not found."
-            echo "Make sure the Wiki feature is enabled for this repo,"
-            echo "and create an initial page via the GitHub UI to initialize the wiki."
-            echo "Skipping wiki sync."
-            echo "wiki_available=false" >> "$GITHUB_OUTPUT"
-          fi
+      - name: Checkout wiki repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}.wiki
+          path: wiki-repo
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Sync docs into wiki
-        if: steps.prepare-wiki.outputs.wiki_available == 'true'
         run: |
           rsync -av --delete docs/ wiki-repo/
 
       - name: Generate wiki Home page
-        if: steps.prepare-wiki.outputs.wiki_available == 'true'
         working-directory: wiki-repo
         run: |
           echo "# Project Documentation" > Home.md
@@ -81,20 +56,11 @@ jobs:
           done
 
       - name: Commit and push wiki changes
-        if: steps.prepare-wiki.outputs.wiki_available == 'true'
         working-directory: wiki-repo
         run: |
           echo "Current directory: $(pwd)"
           echo "Git remotes:"
           git remote -v
-
-          ORIGIN_URL="$(git remote get-url origin || echo '')"
-          echo "Origin URL: $ORIGIN_URL"
-          if ! echo "$ORIGIN_URL" | grep -q ".wiki.git"; then
-            echo "Remote 'origin' does not look like a wiki repo (.wiki.git)."
-            echo "Refusing to push to avoid updating the main repository."
-            exit 1
-          fi
 
           if git status --porcelain | grep .; then
             git add .

@@ -620,4 +620,4 @@ When you complete a tuning run:
 
 ---
 
-Questions: reach out to the User Platform Team.
+Questions: reach out to the User Platform Team
