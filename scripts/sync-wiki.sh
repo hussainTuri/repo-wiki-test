@@ -10,18 +10,25 @@ if [ -n "${GITHUB_TOKEN:-}" ]; then
 fi
 
 rm -rf /tmp/wiki
-git clone "$WIKI_REPO" /tmp/wiki
+mkdir -p /tmp/wiki
+
+if git clone "$WIKI_REPO" /tmp/wiki; then
+	cd /tmp/wiki
+else
+	echo "Wiki repo not found, initializing new wiki repo"
+	cd /tmp/wiki
+	git init
+	git remote add origin "$WIKI_REPO"
+fi
 
 # Remove old content (except Home.md if you want)
-find /tmp/wiki -type f ! -name "Home.md" -delete
+find . -type f ! -name "Home.md" -delete
 
 # Copy docs to wiki
-cp -R docs/* /tmp/wiki/
+cp -R ../docs/* .
 
 # Use docs/README.md as the Wiki home page
-cp docs/README.md /tmp/wiki/Home.md
-
-cd /tmp/wiki
+cp ../docs/README.md Home.md
 
 git config user.name "github-actions"
 git config user.email "github-actions@github.com"

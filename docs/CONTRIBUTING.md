@@ -26,4 +26,4 @@ title: Contributing to Messaging Docs
 1. Edit or add docs under `docs/` (and `docs/images/` for images).
 2. Run a local spellcheck or preview in your editor if desired.
 3. Open a PR with your changes.
-4. After merge to `main`, the wiki sync workflow will update the GitHub Wiki automatically..
+4. After merge to `main`, the wiki sync workflow will update the GitHub Wiki automatically.
