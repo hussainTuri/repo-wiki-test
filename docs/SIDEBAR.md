@@ -4,7 +4,6 @@
 
 ## ADRs
 
-- [ADR Overview](adr-README)
 - [ADR 001: TTL Value Strategy](001-ttl-value-strategy)
 - [ADR 002: Updating notifications](002-updating-notifications)
 - [ADR 003: DynamoDB Devices Table Replicas](003-dynamo-devices-table-replicas)
@@ -14,16 +13,15 @@
 
 ## Dead Letter Queues (DLQ)
 
-- [DLQ Overview](dlq-README)
 - [Push Dead Letter Queue (DLQ) – Operations & Reprocessing Guide](push)
 
 ## Domain Events
 
-- [SNS Event Payload Format for Domain Events](README)
+- [SNS Event Payload Format for Domain Events](events-structure)
 
 ## Lambda Tuning
 
-- [Lambda Performance Tuning (aws-lambda-power-tuning)](lambda/LAMBDA_TUNING)
+- [Lambda Performance Tuning (aws-lambda-power-tuning)](lambda-tuning)
 
 ## Contributing
 

@@ -18,10 +18,10 @@ This folder contains architecture decision records (ADRs), operational runbooks,
   - [Push Dead Letter Queue (DLQ) – Operations & Reprocessing Guide](dlq/push.md)
 
 - **Domain Events**
-  - [SNS Event Payload Format for Domain Events](domain-events/README.md)
+  - [SNS Event Payload Format for Domain Events](domain-events/events-structure.md)
 
 - **Lambda Tuning**
-  - [Lambda Performance Tuning (aws-lambda-power-tuning)](lambda/LAMBDA_TUNING.md)
+  - [Lambda Performance Tuning (aws-lambda-power-tuning)](lambda/lambda-tuning.md)
 
 ## How to Use
 

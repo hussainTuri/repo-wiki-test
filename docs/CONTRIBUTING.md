@@ -9,6 +9,7 @@ title: Contributing to Messaging Docs
 - All documentation lives in `docs/`
 - Do not edit the GitHub Wiki directly
 - Wiki is auto-generated on merge to `main`
+ - GitHub Wiki uses flat page URLs, so treat all Markdown filenames under `docs/` as if they were in a single directory and avoid duplicate basenames across folders.
 
 ## Wiki Sync Workflow
 
@@ -19,7 +20,7 @@ title: Contributing to Messaging Docs
   - Clones the Wiki repo.
   - Clears old content (except `Home.md`).
   - Copies everything from `docs/` into the Wiki.
-  - Copies `docs/README.md` to `Home.md` as the wiki landing page.
+  - Copies `docs/readme.md` to `Home.md` as the wiki landing page.
 
 ## Suggested Flow
 

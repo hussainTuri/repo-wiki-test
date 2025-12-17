@@ -34,8 +34,8 @@ find . -type f ! -name "Home.md" ! -path "./.git/*" -delete
 # Copy docs to wiki from the checked-out repository
 cp -R "${WORKSPACE}/docs/." .
 
-# Use docs/README.md as the Wiki home page
-cp "${WORKSPACE}/docs/README.md" Home.md
+# Use docs/readme.md as the Wiki home page
+cp "${WORKSPACE}/docs/readme.md" Home.md
 
 # Strip YAML front matter from markdown files for nicer wiki rendering
 for file in $(find . -name "*.md"); do
@@ -47,9 +47,9 @@ for file in $(find . -name "*.md"); do
   sed -i 's|\.\./images/|images/|g' "$file" || true
 done
 
-# If a docs/SIDEBAR.md exists, use it as the wiki sidebar (_Sidebar.md)
-if [ -f "${WORKSPACE}/docs/SIDEBAR.md" ]; then
-  cp "${WORKSPACE}/docs/SIDEBAR.md" _Sidebar.md
+# If a docs/sidebar.md exists, use it as the wiki sidebar (_Sidebar.md)
+if [ -f "${WORKSPACE}/docs/sidebar.md" ]; then
+  cp "${WORKSPACE}/docs/sidebar.md" _Sidebar.md
 fi
 
 git config user.name "github-actions"
