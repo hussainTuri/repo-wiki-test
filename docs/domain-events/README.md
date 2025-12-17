@@ -1,3 +1,7 @@
+---
+title: SNS Event Payload Format for Domain Events
+---
+
 # SNS Event Payload Format for Domain Events
 
 This document describes the format of the messages published to the SNS topic by the `devices-stream` and `notifications-stream` Lambda functions. Consumers of this SNS topic should use this as a reference for integration.

@@ -1,3 +1,7 @@
+---
+title: ADR 004: AWS SDK Bundling (Keep Everything Explicit)
+---
+
 # ADR 004: AWS SDK Bundling (Keep Everything Explicit)
 
 ## Status

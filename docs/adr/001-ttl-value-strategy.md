@@ -1,3 +1,7 @@
+---
+title: ADR 001: TTL Value Strategy
+---
+
 # ADR 001: TTL Value Strategy
 
 ## Status

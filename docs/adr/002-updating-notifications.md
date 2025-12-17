@@ -1,3 +1,7 @@
+---
+title: ADR 002: Updating notifications
+---
+
 # ADR 002: Updating notifications
 
 ## Status

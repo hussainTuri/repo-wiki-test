@@ -1,71 +1,26 @@
-name: Sync docs to Wiki
+name: Sync Docs to Wiki
 
 on:
   push:
-    branches:
-      - main
     paths:
       - "docs/**"
+    branches:
+      - main
+
+permissions:
+  contents: write
 
 jobs:
   sync-wiki:
-    name: Generate Wiki from docs
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Configure Git identity
+      - name: Sync docs to wiki
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          ./scripts/sync-wiki.sh
 
-      - name: Checkout wiki repository
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ github.repository }}.wiki
-          path: wiki-repo
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Sync docs into wiki
-        run: |
-          rsync -av --delete docs/ wiki-repo/
-
-      - name: Generate wiki Home page
-        working-directory: wiki-repo
-        run: |
-          echo "# Project Documentation" > Home.md
-          echo >> Home.md
-          echo "This wiki is generated automatically from the docs/ folder." >> Home.md
-          echo >> Home.md
-          echo "## Pages" >> Home.md
-          echo >> Home.md
-
-          # List all markdown files under docs/ and add them as links
-          find ../docs -type f -name '*.md' | sort | while read -r file; do
-            rel="${file#../docs/}"
-            title_base="${rel%.md}"
-            # Create a nicer title by stripping leading numbers and replacing dashes with spaces
-            nice_title="$(echo "$title_base" | sed -E 's/^[0-9]+[-_ ]*//; s/[-_]/ /g')"
-            [ -z "$nice_title" ] && nice_title="$title_base"
-            link_path="${title_base}"
-            echo "- [$nice_title]($link_path)" >> Home.md
-          done
-
-      - name: Commit and push wiki changes
-        working-directory: wiki-repo
-        run: |
-          echo "Current directory: $(pwd)"
-          echo "Git remotes:"
-          git remote -v
-
-          if git status --porcelain | grep .; then
-            git add .
-            git commit -m "[wiki] Sync docs from docs/ folder"
-            git push
-          else
-            echo "No wiki changes to commit"
-          fi

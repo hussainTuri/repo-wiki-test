@@ -1,3 +1,7 @@
+---
+title: ADR 005: Endpoint Status Processor Does Not Retry Failed Lambda Executions
+---
+
 # ADR 005: Endpoint Status Processor Does Not Retry Failed Lambda Executions
 
 ## Status

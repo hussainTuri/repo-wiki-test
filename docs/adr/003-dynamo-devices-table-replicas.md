@@ -1,3 +1,7 @@
+---
+title: ADR 003: DynamoDB Devices Table Replicas
+---
+
 # ADR 003: DynamoDB Devices Table Replicas
 
 ## Status

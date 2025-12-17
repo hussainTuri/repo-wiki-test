@@ -1,3 +1,7 @@
+---
+title: ADR 006: EventBridge Scheduler Configuration for Push Messages
+---
+
 # ADR 006: EventBridge Scheduler Configuration for Push Messages
 
 ## Status

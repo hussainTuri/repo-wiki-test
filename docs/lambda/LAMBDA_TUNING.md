@@ -1,3 +1,7 @@
+---
+title: Lambda Performance Tuning (aws-lambda-power-tuning)
+---
+
 # Lambda Performance Tuning (aws-lambda-power-tuning)
 
 This document captures how we tune the memory/CPU configuration of the messaging system lambdas using the open‑source Step Functions state machine: <https://github.com/alexcasalboni/aws-lambda-power-tuning>.

@@ -1,3 +1,7 @@
+---
+title: ADR <Number>: <Title of the Decision>
+---
+
 # ADR <Number>: <Title of the Decision>
 
 ## Status
