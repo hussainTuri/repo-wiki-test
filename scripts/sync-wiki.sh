@@ -12,6 +12,10 @@ fi
 # Resolve workspace path (GitHub Actions sets GITHUB_WORKSPACE)
 WORKSPACE="${GITHUB_WORKSPACE:-$(pwd)}"
 
+# Ensure we are not inheriting a stale git context (e.g. GIT_DIR from checkout)
+unset GIT_DIR
+unset GIT_WORK_TREE
+
 rm -rf /tmp/wiki
 mkdir -p /tmp/wiki
 
