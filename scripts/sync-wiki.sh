@@ -37,6 +37,16 @@ cp -R "${WORKSPACE}/docs/." .
 # Use docs/README.md as the Wiki home page
 cp "${WORKSPACE}/docs/README.md" Home.md
 
+# Strip YAML front matter from markdown files for nicer wiki rendering
+for file in $(find . -name "*.md"); do
+  perl -0pi -e 's/^---\n.*?\n---\n\n?//s' "$file" || true
+done
+
+# If a docs/SIDEBAR.md exists, use it as the wiki sidebar (_Sidebar.md)
+if [ -f "${WORKSPACE}/docs/SIDEBAR.md" ]; then
+  cp "${WORKSPACE}/docs/SIDEBAR.md" _Sidebar.md
+fi
+
 git config user.name "github-actions"
 git config user.email "github-actions@github.com"
 
