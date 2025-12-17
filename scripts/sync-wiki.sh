@@ -28,8 +28,8 @@ else
   git remote add origin "$WIKI_REPO"
 fi
 
-# Remove old content (except Home.md if you want)
-find . -type f ! -name "Home.md" -delete
+# Remove old content (except Home.md and git metadata)
+find . -type f ! -name "Home.md" ! -path "./.git/*" -delete
 
 # Copy docs to wiki from the checked-out repository
 cp -R "${WORKSPACE}/docs/." .
