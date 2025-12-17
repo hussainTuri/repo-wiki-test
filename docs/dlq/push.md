@@ -2,7 +2,7 @@
 title: Push Dead Letter Queue (DLQ) – Operations & Reprocessing Guide
 ---
 
-![Push DLQ Flow](../images/push-dlq-diagram.png)
+![Push DLQ Flow](./images/push-dlq-diagram.png)
 
 # Quick Intro
 

@@ -42,6 +42,11 @@ for file in $(find . -name "*.md"); do
   perl -0pi -e 's/^---\n.*?\n---\n\n?//s' "$file" || true
 done
 
+# Adjust image paths for wiki (../images -> images)
+for file in $(find . -name "*.md"); do
+  sed -i 's|\.\./images/|images/|g' "$file" || true
+done
+
 # If a docs/SIDEBAR.md exists, use it as the wiki sidebar (_Sidebar.md)
 if [ -f "${WORKSPACE}/docs/SIDEBAR.md" ]; then
   cp "${WORKSPACE}/docs/SIDEBAR.md" _Sidebar.md
