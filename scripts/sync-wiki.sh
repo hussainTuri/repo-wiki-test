@@ -4,6 +4,11 @@ set -e
 REPO_NAME="messaging"
 WIKI_REPO="https://github.com/${GITHUB_REPOSITORY}.wiki.git"
 
+# Use GitHub token for authenticated wiki clone when available (GitHub Actions)
+if [ -n "${GITHUB_TOKEN:-}" ]; then
+	WIKI_REPO="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git"
+fi
+
 rm -rf /tmp/wiki
 git clone "$WIKI_REPO" /tmp/wiki
 
